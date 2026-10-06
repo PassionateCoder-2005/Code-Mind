@@ -1,5 +1,7 @@
-import React from 'react'
 import CodeEditor from './CodeEditor';
+import FileExplorer from './FileExplorer';
+import AiAssistant from './AiAssistant';
+import Terminal from './Terminal';
 
 const IDELayout = () => {
   return (
@@ -7,15 +9,15 @@ const IDELayout = () => {
       
       {/* Header */}
       <header className="h-12 border-b border-slate-800 flex items-center px-4">
-        <div className="font-semibold">AI Web IDE</div>
+        <div className="font-semibold text-lg">Code Mind</div>
       </header>
 
       {/* Main Workspace */}
       <div className="flex flex-1 min-h-0">
 
         {/* Explorer */}
-        <aside className="w-60 border-r border-slate-800">
-          Explorer
+        <aside className="w-60 border-r border-slate-800 flex flex-col overflow-hidden">
+          <FileExplorer />
         </aside>
 
         {/* Editor */}
@@ -24,15 +26,15 @@ const IDELayout = () => {
         </main>
 
         {/* AI Assistant */}
-        <aside className="w-80 border-l border-slate-800">
-          AI Assistant
+        <aside className="w-80 border-l border-slate-800 flex flex-col overflow-hidden">
+          <AiAssistant />
         </aside>
 
       </div>
 
       {/* Terminal */}
-      <div className="h-48 border-t border-slate-800">
-        Terminal
+      <div className="h-56 border-t border-slate-800 flex flex-col overflow-hidden">
+        <Terminal />
       </div>
 
     </div>
