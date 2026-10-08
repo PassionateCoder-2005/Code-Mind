@@ -2,16 +2,17 @@ import CodeEditor from './CodeEditor';
 import FileExplorer from './FileExplorer';
 import AiAssistant from './AiAssistant';
 import Terminal from './Terminal';
+import SaveButton from './SaveButton';
 
 const IDELayout = () => {
   return (
     <div className="h-screen bg-slate-950 text-white flex flex-col">
-      
-      {/* Header */}
-      <header className="h-12 border-b border-slate-800 flex items-center px-4">
-        <div className="font-semibold text-lg">Code Mind</div>
-      </header>
 
+      {/* Header */}
+      <header className="h-12 border-b border-slate-800 flex items-center justify-between px-4">
+        <div className="font-semibold text-lg">Code Mind</div>
+        <SaveButton />
+      </header>
       {/* Main Workspace */}
       <div className="flex flex-1 min-h-0">
 
@@ -22,7 +23,7 @@ const IDELayout = () => {
 
         {/* Editor */}
         <main className="flex-1 min-w-0">
-        <CodeEditor/>
+          <CodeEditor />
         </main>
 
         {/* AI Assistant */}

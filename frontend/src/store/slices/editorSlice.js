@@ -2,14 +2,26 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   activeFile: "App.jsx",
-  openFiles: [],
+  openFiles: [
+    {
+      path: "App.jsx",
+    },
+    {
+      path: "Test.jsx",
+    }
+  ],
   files: {
-  "App.jsx": {
-    content: `function App() {
-  return <h1>Hello AI Web IDE</h1>;
+    "App.jsx": {
+      content: `function App() {
+  return <h1>HELLO FROM APP</h1>;
 }`
-  }
-},
+    },
+    "Test.jsx": {
+      content: `function Test() {
+  return <h1>HELLO FROM TEST</h1>;
+}`
+    }
+  },
   isDirty: false,
 };
 
