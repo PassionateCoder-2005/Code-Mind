@@ -1,12 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  Terminal as TerminalIcon,
-  Play,
-  Trash2,
-  AlertCircle,
-  FileText,
-  CornerDownLeft,
-} from 'lucide-react';
+import {Terminal as TerminalIcon,Play,Trash2,AlertCircle,FileText,CornerDownLeft} from 'lucide-react';
 
 const Terminal = () => {
   const [activeTab, setActiveTab] = useState('terminal');
