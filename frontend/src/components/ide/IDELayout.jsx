@@ -3,15 +3,20 @@ import FileExplorer from './FileExplorer';
 import AiAssistant from './AiAssistant';
 import Terminal from './Terminal';
 import SaveButton from './SaveButton';
-
+import { useDispatch } from 'react-redux';
+import { saveFile } from '../../store/slices/editorSlice';
 const IDELayout = () => {
+  const dispatch=useDispatch();
   return (
     <div className="h-screen bg-slate-950 text-white flex flex-col">
 
       {/* Header */}
       <header className="h-12 border-b border-slate-800 flex items-center justify-between px-4">
-        <div className="font-semibold text-lg">Code Mind</div>
-        <SaveButton />
+        <div 
+        className="font-semibold text-lg">Code Mind</div>
+        <button className='cursor-pointer active:scale-95' onClick={() => dispatch(saveFile())}>
+          <SaveButton />
+        </button>
       </header>
       {/* Main Workspace */}
       <div className="flex flex-1 min-h-0">
