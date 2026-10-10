@@ -1,27 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {
-  ChevronRight,
-  ChevronDown,
-  Folder,
-  FolderOpen,
-  FolderPlus,
-  FilePlus,
-  FileCode,
-  FileBraces,
-  FileText,
-  File,
-  Trash2,
-  X,
-  AlertTriangle,
-} from 'lucide-react';
+import { ChevronRight, ChevronDown, Folder, FolderOpen, FolderPlus, FilePlus, FileCode, FileBraces, FileText, File, Trash2, Pencil, X, AlertTriangle, } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  createFile,
-  createFolder,
-  openFile,
-  deleteFile,
-  deleteFolder,
-} from '../../store/slices/editorSlice';
+import { createFile, createFolder, openFile, deleteFile, deleteFolder, renameFile, renameFolder} from '../../store/slices/editorSlice';
 
 const FileIcon = ({ filename = '' }) => {
   if (filename.endsWith('.jsx') || filename.endsWith('.tsx')) {
@@ -227,6 +207,51 @@ const FileExplorer = ({ onFileSelect }) => {
     }
   };
 
+  // Rename file or folder using window.prompt
+  const handleRenameClick = (e, item) => {
+    e.stopPropagation();
+    if (!item) return;
+
+    const currentName = item.name;
+    const newName = window.prompt(
+      `Enter new ${item.type === 'folder' ? 'folder' : 'file'} name:`,
+      currentName
+    );
+
+    if (!newName || !newName.trim() || newName.trim() === currentName) {
+      return;
+    }
+
+    const trimmedName = newName.trim();
+    const pathParts = item.id.split('/').filter(Boolean);
+    const parentParts = pathParts.slice(0, -1);
+    const newPath =
+      parentParts.length > 0 ? `${parentParts.join('/')}/${trimmedName}` : trimmedName;
+
+    if (files[newPath]) {
+      window.alert(`A file or folder named "${trimmedName}" already exists.`);
+      return;
+    }
+
+    if (item.type === 'folder') {
+      dispatch(renameFolder({ oldPath: item.id, newPath }));
+      setOpenFolders((prev) => {
+        const next = { ...prev };
+        if (next[item.id] !== undefined) {
+          next[newPath] = next[item.id];
+          delete next[item.id];
+        }
+        return next;
+      });
+    } else {
+      dispatch(renameFile({ oldPath: item.id, newPath }));
+    }
+
+    if (selectedId === item.id) {
+      setSelectedId(newPath);
+    }
+  };
+
   // Prompt delete confirmation modal
   const handleDeleteClick = (e, item) => {
     e.stopPropagation();
@@ -302,15 +327,25 @@ const FileExplorer = ({ onFileSelect }) => {
 
             <span className="truncate flex-1 tracking-wide">{node.name}</span>
 
-            {/* Delete button on hover */}
-            <button
-              type="button"
-              onClick={(e) => handleDeleteClick(e, node)}
-              title={`Delete ${isFolder ? 'folder' : 'file'}`}
-              className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded transition-all cursor-pointer"
-            >
-              <Trash2 size={13} />
-            </button>
+            {/* Action buttons on hover */}
+            <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition-opacity">
+              <button
+                type="button"
+                onClick={(e) => handleRenameClick(e, node)}
+                title={`Rename ${isFolder ? 'folder' : 'file'}`}
+                className="p-1 text-slate-400 hover:text-cyan-400 hover:bg-slate-700/50 rounded transition-all cursor-pointer"
+              >
+                <Pencil size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => handleDeleteClick(e, node)}
+                title={`Delete ${isFolder ? 'folder' : 'file'}`}
+                className="p-1 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded transition-all cursor-pointer"
+              >
+                <Trash2 size={13} />
+              </button>
+            </div>
           </div>
 
           {isFolder && isOpen && node.children && node.children.length > 0 && (
@@ -346,14 +381,24 @@ const FileExplorer = ({ onFileSelect }) => {
             <FolderPlus size={15} />
           </button>
           {selectedTarget && (
-            <button
-              type="button"
-              onClick={(e) => handleDeleteClick(e, selectedTarget)}
-              title={`Delete selected ${selectedTarget.type === 'folder' ? 'folder' : 'file'}`}
-              className="p-1 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded transition-colors cursor-pointer"
-            >
-              <Trash2 size={15} />
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={(e) => handleRenameClick(e, selectedTarget)}
+                title={`Rename selected ${selectedTarget.type === 'folder' ? 'folder' : 'file'}`}
+                className="p-1 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded transition-colors cursor-pointer"
+              >
+                <Pencil size={15} />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => handleDeleteClick(e, selectedTarget)}
+                title={`Delete selected ${selectedTarget.type === 'folder' ? 'folder' : 'file'}`}
+                className="p-1 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded transition-colors cursor-pointer"
+              >
+                <Trash2 size={15} />
+              </button>
+            </>
           )}
         </div>
       </div>

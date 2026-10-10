@@ -25,8 +25,11 @@ const CodeEditor = () => {
   // Get the language of the file
   const getLanguage = (fileName) => {
     const extension = fileName?.split('.').pop();
-    if (extension === 'jsx' || extension === 'tsx') {
+    if (extension === 'jsx') {
       return 'javascript';
+    }
+    if (extension === 'tsx' || extension === 'ts') {
+      return 'typescript';
     }
     if (extension === 'py') {
       return 'python';

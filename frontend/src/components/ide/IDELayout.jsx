@@ -3,10 +3,11 @@ import FileExplorer from './FileExplorer';
 import AiAssistant from './AiAssistant';
 import Terminal from './Terminal';
 import SaveButton from './SaveButton';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { saveFile } from '../../store/slices/editorSlice';
 const IDELayout = () => {
   const dispatch=useDispatch();
+  const activeFile=useSelector((state)=>state.editor.activeFile);
   return (
     <div className="h-screen bg-slate-950 text-white flex flex-col">
 
@@ -14,7 +15,9 @@ const IDELayout = () => {
       <header className="h-12 border-b border-slate-800 flex items-center justify-between px-4">
         <div 
         className="font-semibold text-lg">Code Mind</div>
-        <button className='cursor-pointer active:scale-95' onClick={() => dispatch(saveFile())}>
+        <button className='cursor-pointer active:scale-95' onClick={() => dispatch(saveFile({
+          path: activeFile,
+        }))}>
           <SaveButton />
         </button>
       </header>
