@@ -13,7 +13,7 @@ googleRouter.get(
         scope: ["profile", "email"],
         session: false
     })
-);
+);  
 
 // Step 2: Google redirects back here
 googleRouter.get(

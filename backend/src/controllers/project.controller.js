@@ -1,5 +1,4 @@
 import projectModel from "../models/project.model.js";
-
 export const createProject = async (req, res) => {
       try {
         const {name}=req.body;
