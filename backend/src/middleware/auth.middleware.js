@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import CONFIG from "../config/config.js";
 import blacklistTokenModel from "../models/token.blacklist.model.js";
 export const authMiddleware = async(req, res, next) => {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization; // access token should be sent in the Authorization header as "Bearer <
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({

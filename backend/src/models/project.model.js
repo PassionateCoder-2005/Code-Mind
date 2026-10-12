@@ -10,15 +10,16 @@ const projectSchema = new mongoose.Schema({
         required: [true, 'Project owner is required']
     },
     files: {
-        type:Object,
-        required: [true, 'Project files are required']
-    },
+    type: mongoose.Schema.Types.Mixed,
+    default: {}
+},
     folders: {
         type:Array,
         required: [true, 'Project folder is required']
     },
 },{
-    timestamps: true
+    timestamps: true,
+    minimize: false // Prevents Mongoose from removing empty objects
 });
 const projectModel = mongoose.model('project', projectSchema);
 export default projectModel;
