@@ -114,7 +114,9 @@ export const deleteProject = async (req, res) => {
                 message:"Project not found"
             });
         }
-        await projectModel.findByIdAndDelete(projectId);
+        await projectModel.findByIdAndDelete(projectId,{
+            returnDocument: 'after'
+        });
         return res.status(200).json({
             success:true,
             message:"Project deleted successfully"
