@@ -1,6 +1,6 @@
 
 import { createSlice } from "@reduxjs/toolkit";
-import { loginUser, logOutUser, signUpUser } from "../authThunk";
+import { getCurrentUser, loginUser, logOutUser, signUpUser } from "../authThunk";
 
 const initialState = {
     user: null,
@@ -93,7 +93,24 @@ export const authSlice = createSlice({
             .addCase(logOutUser.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload || action.error.message;
-            });
+            })
+
+            // GET USER
+            .addCase(getCurrentUser.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(getCurrentUser.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.user = action.payload.user;
+                state.accessToken = action.payload.accessToken;
+                state.isAuthenticated = true;
+                state.error = null;
+            })
+            .addCase(getCurrentUser.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload || action.error.message;
+            })
     },
 });
 

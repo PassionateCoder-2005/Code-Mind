@@ -1,13 +1,6 @@
-import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setActiveFile, closeFile } from '../../store/slices/editorSlice';
-import {
-  FileCode,
-  FileBraces,
-  FileText,
-  File,
-  X,
-} from 'lucide-react';
+import { FileCode,FileBraces,FileText,File,X } from 'lucide-react';
 
 const getFileIcon = (filename = '') => {
   if (filename.endsWith('.jsx') || filename.endsWith('.tsx')) {

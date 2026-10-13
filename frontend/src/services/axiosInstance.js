@@ -1,7 +1,5 @@
-
 import axios from "axios";
-import { store } from "../store/store";
-import { setAccessToken } from "../store/slices/authSlice";
+
 export const axiosIntance = axios.create({
     baseURL: "http://localhost:3000/api/",
     withCredentials: true,
@@ -10,15 +8,26 @@ export const axiosIntance = axios.create({
     },
 });
 
+let getAccessToken = () => null;
+let updateAccessToken = () => {};
+
+export const injectAuthDependencies = ({
+    getToken,
+    setToken,
+}) => {
+    getAccessToken = getToken;
+    updateAccessToken = setToken;
+};
+
 let isRefreshing = false;
 let failedQueue = [];
 
 const processQueue = (error, token = null) => {
-    failedQueue.forEach((prom) => {
+    failedQueue.forEach(({ resolve, reject }) => {
         if (error) {
-            prom.reject(error);
+            reject(error);
         } else {
-            prom.resolve(token);
+            resolve(token);
         }
     });
 
@@ -27,19 +36,19 @@ const processQueue = (error, token = null) => {
 
 axiosIntance.interceptors.request.use(
     (config) => {
+        const isAuthRequest =
+            config.url?.includes("auth/login") ||
+            config.url?.includes("auth/signup") ||
+            config.url?.includes("auth/refresh");
 
-const isAuthRequest =
-    config.url?.includes("auth/login") ||
-    config.url?.includes("auth/signup") ||
-    config.url?.includes("auth/refresh");
+        if (!isAuthRequest) {
+            const accessToken = getAccessToken();
 
-if (!isAuthRequest) {
-    const accessToken = store.getState().auth.accessToken;
-
-    if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-    }
-}
+            if (accessToken) {
+                config.headers.Authorization =
+                    `Bearer ${accessToken}`;
+            }
+        }
 
         return config;
     },
@@ -66,7 +75,12 @@ axiosIntance.interceptors.response.use(
             return new Promise((resolve, reject) => {
                 failedQueue.push({ resolve, reject });
             }).then((token) => {
-                originalRequest.headers.Authorization = `Bearer ${token}`;
+                originalRequest.headers =
+                    originalRequest.headers || {};
+
+                originalRequest.headers.Authorization =
+                    `Bearer ${token}`;
+
                 return axiosIntance(originalRequest);
             });
         }
@@ -75,14 +89,25 @@ axiosIntance.interceptors.response.use(
         isRefreshing = true;
 
         try {
-            const response = await axiosIntance.post("auth/refresh");
-            const newAccessToken = response.data.accessToken;
-store.dispatch(setAccessToken(newAccessToken));
+            const response = await axiosIntance.post(
+                "auth/refresh"
+            );
+
+            const newAccessToken =
+                response.data.accessToken;
+
             if (!newAccessToken) {
-                throw new Error("New access token was not returned");
+                throw new Error(
+                    "New access token was not returned"
+                );
             }
 
+            updateAccessToken(newAccessToken);
+
             processQueue(null, newAccessToken);
+
+            originalRequest.headers =
+                originalRequest.headers || {};
 
             originalRequest.headers.Authorization =
                 `Bearer ${newAccessToken}`;
